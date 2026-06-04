@@ -431,7 +431,7 @@ MovementSection:CreateToggle({
 ```lua
 -- Load VoidUI
 local VoidUI = loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/YOUR_USERNAME/VoidUI/main/VoidUI.lua"
+    "https://raw.githubusercontent.com/ImYasuf/VoidUi/refs/heads/main/loader"
 ))()
 
 -- Create window
