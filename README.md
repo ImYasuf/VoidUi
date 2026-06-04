@@ -25,7 +25,6 @@
 ## Table of Contents
 
 - [Features](#features)
-- [Hosting on GitHub](#hosting-on-github)
 - [Loading VoidUI](#loading-voidui)
 - [Creating a Window](#creating-a-window)
 - [Tabs](#tabs)
