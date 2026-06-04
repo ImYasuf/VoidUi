@@ -1,17 +1,6 @@
---[[
-    VoidUI - A Modern Roblox UI Library
-    Style: Modern & Sleek | Monochrome
-    Features: Tabs, Toggles, Sliders, Dropdowns, Buttons,
-              TextInputs, Keybinds, ColorPickers, Notifications
-    Window: Draggable, Resizable, Minimizable
---]]
-
 local VoidUI = {}
 VoidUI.__index = VoidUI
 
--- ─────────────────────────────────────────────
---  Services
--- ─────────────────────────────────────────────
 local Players         = game:GetService("Players")
 local TweenService    = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -21,10 +10,6 @@ local CoreGui         = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
 local Mouse       = LocalPlayer:GetMouse()
 
--- ─────────────────────────────────────────────
---  Single Instance Cleanup
---  Destroy any previous VoidUI GUIs before spawning new ones
--- ─────────────────────────────────────────────
 local function DestroyAllVoidUI()
     local targets = { CoreGui, LocalPlayer:FindFirstChild("PlayerGui") }
     for _, parent in ipairs(targets) do
@@ -39,9 +24,6 @@ local function DestroyAllVoidUI()
 end
 DestroyAllVoidUI()
 
--- ─────────────────────────────────────────────
---  Loading Screen (protected, 3 seconds)
--- ─────────────────────────────────────────────
 local function ShowLoadingScreen()
     local hints = {
         "Crafting a seamless experience...",
@@ -63,7 +45,6 @@ local function ShowLoadingScreen()
     pcall(function() loadSg.Parent = CoreGui end)
     if not loadSg.Parent then loadSg.Parent = LocalPlayer.PlayerGui end
 
-    -- Dim overlay behind card
     local overlay = Instance.new("Frame")
     overlay.Size = UDim2.new(1, 0, 1, 0)
     overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -71,7 +52,6 @@ local function ShowLoadingScreen()
     overlay.ZIndex = 1
     overlay.Parent = loadSg
 
-    -- Card — small, centered, fixed size
     local card = Instance.new("Frame")
     card.Size = UDim2.new(0, 280, 0, 138)
     card.Position = UDim2.new(0.5, -140, 0.5, -69)
@@ -90,7 +70,6 @@ local function ShowLoadingScreen()
     cardStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     cardStroke.Parent = card
 
-    -- Top accent line
     local accentLine = Instance.new("Frame")
     accentLine.Size = UDim2.new(0, 40, 0, 2)
     accentLine.Position = UDim2.new(0.5, -20, 0, 0)
@@ -102,7 +81,6 @@ local function ShowLoadingScreen()
     accentCorner.CornerRadius = UDim.new(0, 2)
     accentCorner.Parent = accentLine
 
-    -- Logo dot
     local dot = Instance.new("Frame")
     dot.Size = UDim2.new(0, 6, 0, 6)
     dot.Position = UDim2.new(0.5, -3, 0, 22)
@@ -114,7 +92,6 @@ local function ShowLoadingScreen()
     dotCorner.CornerRadius = UDim.new(1, 0)
     dotCorner.Parent = dot
 
-    -- Title
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1, 0, 0, 28)
     title.Position = UDim2.new(0, 0, 0, 34)
@@ -127,7 +104,6 @@ local function ShowLoadingScreen()
     title.ZIndex = 3
     title.Parent = card
 
-    -- Progress bar track
     local trackBg = Instance.new("Frame")
     trackBg.Size = UDim2.new(0, 220, 0, 3)
     trackBg.Position = UDim2.new(0.5, -110, 0, 78)
@@ -139,7 +115,6 @@ local function ShowLoadingScreen()
     trackCorner.CornerRadius = UDim.new(1, 0)
     trackCorner.Parent = trackBg
 
-    -- Progress bar fill
     local fill = Instance.new("Frame")
     fill.Size = UDim2.new(0, 0, 1, 0)
     fill.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
@@ -150,7 +125,6 @@ local function ShowLoadingScreen()
     fillCorner.CornerRadius = UDim.new(1, 0)
     fillCorner.Parent = fill
 
-    -- Hint text
     local hintLabel = Instance.new("TextLabel")
     hintLabel.Size = UDim2.new(1, -24, 0, 20)
     hintLabel.Position = UDim2.new(0, 12, 0, 92)
@@ -164,7 +138,6 @@ local function ShowLoadingScreen()
     hintLabel.ZIndex = 3
     hintLabel.Parent = card
 
-    -- Version tag
     local ver = Instance.new("TextLabel")
     ver.Size = UDim2.new(1, 0, 0, 16)
     ver.Position = UDim2.new(0, 0, 0, 114)
@@ -177,14 +150,12 @@ local function ShowLoadingScreen()
     ver.ZIndex = 3
     ver.Parent = card
 
-    -- Protect from modification — lock after building
     local protected = false
     task.delay(0.05, function() protected = true end)
     loadSg.DescendantAdded:Connect(function(d)
         if protected then d:Destroy() end
     end)
 
-    -- Animate card in
     card.BackgroundTransparency = 1
     cardStroke.Transparency = 1
     title.TextTransparency = 1
@@ -204,14 +175,12 @@ local function ShowLoadingScreen()
     TweenService:Create(hintLabel, TweenInfo.new(0.3), { TextTransparency = 0 }):Play()
     TweenService:Create(ver, TweenInfo.new(0.3), { TextTransparency = 0 }):Play()
 
-    -- Animate progress bar over 2.6 seconds
     TweenService:Create(fill, TweenInfo.new(2.6, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
         Size = UDim2.new(1, 0, 1, 0)
     }):Play()
 
     task.wait(3)
 
-    -- Fade out everything
     local fadeInfo = TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     TweenService:Create(card, fadeInfo, { BackgroundTransparency = 1 }):Play()
     TweenService:Create(overlay, fadeInfo, { BackgroundTransparency = 1 }):Play()
@@ -228,9 +197,6 @@ local function ShowLoadingScreen()
 end
 ShowLoadingScreen()
 
--- ─────────────────────────────────────────────
---  Theme
--- ─────────────────────────────────────────────
 local Theme = {
     Background    = Color3.fromRGB(10,  10,  10),
     Surface       = Color3.fromRGB(18,  18,  18),
@@ -259,9 +225,6 @@ local Theme = {
     TweenSlow     = TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
 }
 
--- ─────────────────────────────────────────────
---  Utility
--- ─────────────────────────────────────────────
 local function Tween(obj, props, info)
     TweenService:Create(obj, info or Theme.TweenInfo, props):Play()
 end
@@ -362,7 +325,6 @@ local function MakeResizable(frame, minSize, maxSize)
     }, frame)
     Corner(handle, 2)
 
-    -- Resize icon
     New("ImageLabel", {
         Size              = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
@@ -393,9 +355,6 @@ local function MakeResizable(frame, minSize, maxSize)
     end)
 end
 
--- ─────────────────────────────────────────────
---  Notification System
--- ─────────────────────────────────────────────
 local NotifHolder
 
 local function EnsureNotifHolder()
@@ -437,7 +396,6 @@ function VoidUI:Notify(options)
         Error   = Theme.Error,
     })[ntype] or Theme.Info
 
-    -- Card
     local card = New("Frame", {
         Size            = UDim2.new(1, 0, 0, 70),
         BackgroundColor3 = Theme.Surface,
@@ -446,7 +404,6 @@ function VoidUI:Notify(options)
     Corner(card, Theme.CornerLarge)
     Stroke(card, Theme.Border)
 
-    -- Accent bar
     New("Frame", {
         Size            = UDim2.new(0, 3, 1, 0),
         BackgroundColor3 = typeColor,
@@ -456,7 +413,6 @@ function VoidUI:Notify(options)
         BackgroundColor3 = typeColor,
     }, card), 3)
 
-    -- Text area
     local textFrame = New("Frame", {
         Size     = UDim2.new(1, -20, 1, 0),
         Position = UDim2.new(0, 14, 0, 0),
@@ -486,14 +442,12 @@ function VoidUI:Notify(options)
         TextWrapped     = true,
     }, textFrame)
 
-    -- Progress bar
     local prog = New("Frame", {
         Size            = UDim2.new(1, 0, 0, 2),
         Position        = UDim2.new(0, 0, 1, -2),
         BackgroundColor3 = typeColor,
     }, card)
 
-    -- Animate in
     card.BackgroundTransparency = 1
     Tween(card, { BackgroundTransparency = 0 }, Theme.TweenInfo)
     Tween(prog, { Size = UDim2.new(0, 0, 0, 2) },
@@ -506,16 +460,12 @@ function VoidUI:Notify(options)
     end)
 end
 
--- ─────────────────────────────────────────────
---  Window Constructor
--- ─────────────────────────────────────────────
 function VoidUI:CreateWindow(options)
     options = options or {}
     local title   = options.Title   or "VoidUI"
     local size    = options.Size    or UDim2.new(0, 560, 0, 420)
     local pos     = options.Position or UDim2.new(0.5, -280, 0.5, -210)
 
-    -- ScreenGui
     local sg = New("ScreenGui", {
         Name           = "VoidUI_" .. title,
         ResetOnSpawn   = false,
@@ -524,7 +474,6 @@ function VoidUI:CreateWindow(options)
     pcall(function() sg.Parent = CoreGui end)
     if not sg.Parent then sg.Parent = LocalPlayer.PlayerGui end
 
-    -- Main window frame
     local win = New("Frame", {
         Size            = size,
         Position        = pos,
@@ -534,7 +483,6 @@ function VoidUI:CreateWindow(options)
     Corner(win, Theme.CornerLarge)
     Stroke(win, Theme.Border)
 
-    -- Shadow
     local shadow = New("ImageLabel", {
         Size              = UDim2.new(1, 40, 1, 40),
         Position          = UDim2.new(0, -20, 0, -20),
@@ -545,21 +493,18 @@ function VoidUI:CreateWindow(options)
         ZIndex            = -1,
     }, win)
 
-    -- ── Title Bar ──
     local titleBar = New("Frame", {
         Size            = UDim2.new(1, 0, 0, 44),
         BackgroundColor3 = Theme.Surface,
     }, win)
     Corner(titleBar, Theme.CornerLarge)
 
-    -- Bottom fill to cancel corner on bottom of titlebar
     New("Frame", {
         Size            = UDim2.new(1, 0, 0, Theme.CornerLarge),
         Position        = UDim2.new(0, 0, 1, -Theme.CornerLarge),
         BackgroundColor3 = Theme.Surface,
     }, titleBar)
 
-    -- Logo dot
     New("Frame", {
         Size            = UDim2.new(0, 8, 0, 8),
         Position        = UDim2.new(0, 14, 0.5, -4),
@@ -577,12 +522,11 @@ function VoidUI:CreateWindow(options)
         TextXAlignment  = Enum.TextXAlignment.Left,
     }, titleBar)
 
-    -- Close button
     local closeBtn = New("TextButton", {
         Size            = UDim2.new(0, 28, 0, 28),
         Position        = UDim2.new(1, -36, 0.5, -14),
         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-        Text            = "✕",
+        Text            = "X",
         Font            = Theme.Font,
         TextSize        = 11,
         TextColor3      = Theme.TextMuted,
@@ -600,13 +544,12 @@ function VoidUI:CreateWindow(options)
         DestroyAllVoidUI()
     end)
 
-    -- Minimize button
     local minimized = false
     local minBtn = New("TextButton", {
         Size            = UDim2.new(0, 28, 0, 28),
         Position        = UDim2.new(1, -70, 0.5, -14),
         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-        Text            = "─",
+        Text            = "-",
         Font            = Theme.Font,
         TextSize        = 11,
         TextColor3      = Theme.TextMuted,
@@ -620,7 +563,6 @@ function VoidUI:CreateWindow(options)
         Tween(minBtn, { BackgroundColor3 = Color3.fromRGB(40,40,40), TextColor3 = Theme.TextMuted })
     end)
 
-    -- Body (contains sidebar + content)
     local body = New("Frame", {
         Size            = UDim2.new(1, 0, 1, -44),
         Position        = UDim2.new(0, 0, 0, 44),
@@ -628,13 +570,11 @@ function VoidUI:CreateWindow(options)
         ClipsDescendants = true,
     }, win)
 
-    -- Sidebar
     local sidebar = New("Frame", {
         Size            = UDim2.new(0, 130, 1, 0),
         BackgroundColor3 = Theme.Surface,
     }, body)
 
-    -- Bottom-left corner fix
     New("Frame", {
         Size            = UDim2.new(1, 0, 0, Theme.CornerLarge),
         Position        = UDim2.new(0, 0, 1, -Theme.CornerLarge),
@@ -651,7 +591,6 @@ function VoidUI:CreateWindow(options)
     ListLayout(tabList, Enum.FillDirection.Vertical, 2)
     Padding(tabList, nil, 0, 0, 8, 8)
 
-    -- Content area
     local contentArea = New("Frame", {
         Size            = UDim2.new(1, -130, 1, 0),
         Position        = UDim2.new(0, 130, 0, 0),
@@ -659,17 +598,14 @@ function VoidUI:CreateWindow(options)
         ClipsDescendants = true,
     }, body)
 
-    -- Divider line
     New("Frame", {
         Size            = UDim2.new(0, 1, 1, 0),
         BackgroundColor3 = Theme.Border,
     }, body)
 
-    -- Draggable & Resizable
     MakeDraggable(win, titleBar)
     MakeResizable(win)
 
-    -- Minimize logic
     local savedSize
     minBtn.MouseButton1Click:Connect(function()
         minimized = not minimized
@@ -684,7 +620,6 @@ function VoidUI:CreateWindow(options)
         end
     end)
 
-    -- ── Window Object ──
     local Window = {}
     local tabs = {}
     local activeTab = nil
@@ -708,13 +643,11 @@ function VoidUI:CreateWindow(options)
         tab._page.Visible = true
     end
 
-    -- ── CreateTab ──
     function Window:CreateTab(options)
         options = type(options) == "string" and { Name = options } or options
         local name = options.Name or "Tab"
         local icon = options.Icon or ""
 
-        -- Tab button
         local btn = New("TextButton", {
             Size            = UDim2.new(1, 0, 0, 34),
             BackgroundColor3 = Color3.fromRGB(0,0,0),
@@ -729,7 +662,6 @@ function VoidUI:CreateWindow(options)
         Corner(btn, Theme.CornerSmall)
         Padding(btn, nil, 0, 0, 10, 0)
 
-        -- Selection indicator
         local indicator = New("Frame", {
             Size            = UDim2.new(0, 2, 0.6, 0),
             Position        = UDim2.new(0, 0, 0.2, 0),
@@ -747,7 +679,6 @@ function VoidUI:CreateWindow(options)
             Tween(btn, { TextColor3 = Theme.TextMuted })
         end)
 
-        -- Page
         local page = New("ScrollingFrame", {
             Size              = UDim2.new(1, 0, 1, 0),
             BackgroundTransparency = 1,
@@ -779,12 +710,9 @@ function VoidUI:CreateWindow(options)
             indicator.BackgroundTransparency = 0
         end
 
-        -- Update canvas
         pageLayout.Changed:Connect(function()
             tabList.CanvasSize = UDim2.new(0, 0, 0, pageLayout.AbsoluteContentSize.Y + 20)
         end)
-
-        -- ── Element Helpers ──
 
         local function MakeSection(labelText)
             local sec = New("Frame", {
@@ -820,12 +748,10 @@ function VoidUI:CreateWindow(options)
             return sec, layout
         end
 
-        -- ── CreateSection ──
         function Tab:CreateSection(name)
             local sec, _ = MakeSection(name)
             local Section = {}
 
-            -- ── Button ──
             function Section:CreateButton(opts)
                 opts = type(opts) == "string" and { Name = opts } or opts
                 local label    = opts.Name     or "Button"
@@ -851,7 +777,6 @@ function VoidUI:CreateWindow(options)
                     TextXAlignment  = Enum.TextXAlignment.Left,
                 }, row)
 
-                -- Arrow icon
                 New("TextLabel", {
                     Size            = UDim2.new(0, 20, 1, 0),
                     Position        = UDim2.new(1, -24, 0, 0),
@@ -878,7 +803,6 @@ function VoidUI:CreateWindow(options)
                 return row
             end
 
-            -- ── Toggle ──
             function Section:CreateToggle(opts)
                 opts = type(opts) == "string" and { Name = opts } or opts
                 local label    = opts.Name     or "Toggle"
@@ -904,7 +828,6 @@ function VoidUI:CreateWindow(options)
                     TextXAlignment  = Enum.TextXAlignment.Left,
                 }, row)
 
-                -- Track
                 local track = New("Frame", {
                     Size            = UDim2.new(0, 36, 0, 18),
                     Position        = UDim2.new(1, -48, 0.5, -9),
@@ -912,7 +835,6 @@ function VoidUI:CreateWindow(options)
                 }, row)
                 Corner(track, 9)
 
-                -- Thumb
                 local thumb = New("Frame", {
                     Size            = UDim2.new(0, 12, 0, 12),
                     Position        = state and UDim2.new(1, -15, 0.5, -6) or UDim2.new(0, 3, 0.5, -6),
@@ -953,7 +875,6 @@ function VoidUI:CreateWindow(options)
                 return Toggle
             end
 
-            -- ── Slider ──
             function Section:CreateSlider(opts)
                 opts = type(opts) == "string" and { Name = opts } or opts
                 local label    = opts.Name     or "Slider"
@@ -973,7 +894,6 @@ function VoidUI:CreateWindow(options)
                 Corner(row, Theme.CornerMedium)
                 Stroke(row, Theme.Border)
 
-                -- Header
                 local lbl = New("TextLabel", {
                     Size            = UDim2.new(0.6, 0, 0, 24),
                     Position        = UDim2.new(0, 12, 0, 4),
@@ -996,7 +916,6 @@ function VoidUI:CreateWindow(options)
                     TextXAlignment  = Enum.TextXAlignment.Right,
                 }, row)
 
-                -- Track
                 local track = New("Frame", {
                     Size            = UDim2.new(1, -24, 0, 4),
                     Position        = UDim2.new(0, 12, 0, 36),
@@ -1010,7 +929,6 @@ function VoidUI:CreateWindow(options)
                 }, track)
                 Corner(fill, 2)
 
-                -- Thumb
                 local thumbSlider = New("Frame", {
                     Size            = UDim2.new(0, 12, 0, 12),
                     Position        = UDim2.new((value - min) / (max - min), -6, 0.5, -6),
@@ -1069,7 +987,6 @@ function VoidUI:CreateWindow(options)
                 return Slider
             end
 
-            -- ── Dropdown ──
             function Section:CreateDropdown(opts)
                 opts = type(opts) == "string" and { Name = opts } or opts
                 local label    = opts.Name     or "Dropdown"
@@ -1130,7 +1047,6 @@ function VoidUI:CreateWindow(options)
                     ZIndex          = 5,
                 }, row)
 
-                -- Dropdown list
                 local dropFrame = New("Frame", {
                     Size            = UDim2.new(1, 0, 0, 0),
                     Position        = UDim2.new(0, 0, 1, 4),
@@ -1182,7 +1098,6 @@ function VoidUI:CreateWindow(options)
                             selected = item
                             selLabel.Text = selected
                             callback(selected)
-                            -- Close
                             open = false
                             Tween(dropFrame, { Size = UDim2.new(1, 0, 0, 0) })
                             task.wait(0.2)
@@ -1229,7 +1144,6 @@ function VoidUI:CreateWindow(options)
                 return Dropdown
             end
 
-            -- ── TextInput ──
             function Section:CreateTextInput(opts)
                 opts = type(opts) == "string" and { Name = opts } or opts
                 local label       = opts.Name        or "Input"
@@ -1291,7 +1205,6 @@ function VoidUI:CreateWindow(options)
                 return Input
             end
 
-            -- ── Keybind ──
             function Section:CreateKeybind(opts)
                 opts = type(opts) == "string" and { Name = opts } or opts
                 local label    = opts.Name     or "Keybind"
@@ -1340,7 +1253,6 @@ function VoidUI:CreateWindow(options)
 
                 UserInputService.InputBegan:Connect(function(input, gp)
                     if not waiting then
-                        -- Fire callback when key is pressed
                         if input.KeyCode == bound then
                             callback(bound)
                         end
@@ -1363,7 +1275,6 @@ function VoidUI:CreateWindow(options)
                 return Keybind
             end
 
-            -- ── ColorPicker ──
             function Section:CreateColorPicker(opts)
                 opts = type(opts) == "string" and { Name = opts } or opts
                 local label    = opts.Name     or "Color"
@@ -1373,7 +1284,6 @@ function VoidUI:CreateWindow(options)
                 local color = default
                 local open  = false
 
-                -- HSV state
                 local h, s, v = Color3.toHSV(color)
 
                 local container = New("Frame", {
@@ -1412,7 +1322,6 @@ function VoidUI:CreateWindow(options)
                 Corner(preview, Theme.CornerSmall)
                 Stroke(preview, Theme.Border)
 
-                -- Picker panel
                 local panel = New("Frame", {
                     Size            = UDim2.new(1, 0, 0, 160),
                     Position        = UDim2.new(0, 0, 1, 4),
@@ -1424,7 +1333,6 @@ function VoidUI:CreateWindow(options)
                 Corner(panel, Theme.CornerMedium)
                 Stroke(panel, Theme.Border)
 
-                -- SV square
                 local svSquare = New("ImageLabel", {
                     Size            = UDim2.new(0, 120, 0, 120),
                     Position        = UDim2.new(0, 10, 0, 10),
@@ -1442,7 +1350,6 @@ function VoidUI:CreateWindow(options)
                 Corner(svThumb, 5)
                 Stroke(svThumb, Color3.new(0,0,0), 1)
 
-                -- Hue bar
                 local hueBar = New("ImageLabel", {
                     Size            = UDim2.new(0, 16, 0, 120),
                     Position        = UDim2.new(0, 138, 0, 10),
@@ -1460,7 +1367,6 @@ function VoidUI:CreateWindow(options)
                 Corner(hueThumb, 2)
                 Stroke(hueThumb, Color3.new(0,0,0), 1)
 
-                -- RGB readout
                 local rgbLabel = New("TextLabel", {
                     Size            = UDim2.new(1, -170, 0, 40),
                     Position        = UDim2.new(0, 162, 0, 10),
@@ -1489,7 +1395,6 @@ function VoidUI:CreateWindow(options)
                     callback(color)
                 end
 
-                -- SV dragging
                 local svDrag = false
                 local svBtn = New("TextButton", { Size=UDim2.new(1,0,1,0), BackgroundTransparency=1, Text="", ZIndex=9 }, svSquare)
                 svBtn.InputBegan:Connect(function(input)
@@ -1510,7 +1415,6 @@ function VoidUI:CreateWindow(options)
                     end
                 end)
 
-                -- Hue dragging
                 local hueDrag = false
                 local hueBtn = New("TextButton", { Size=UDim2.new(1,0,1,0), BackgroundTransparency=1, Text="", ZIndex=9 }, hueBar)
                 hueBtn.InputBegan:Connect(function(input)
@@ -1528,7 +1432,6 @@ function VoidUI:CreateWindow(options)
                     end
                 end)
 
-                -- Toggle panel
                 local openBtn = New("TextButton", { Size=UDim2.new(1,0,1,0), BackgroundTransparency=1, Text="", ZIndex=5 }, row)
                 openBtn.MouseButton1Click:Connect(function()
                     open = not open
@@ -1547,7 +1450,6 @@ function VoidUI:CreateWindow(options)
                 return CP
             end
 
-            -- ── Label ──
             function Section:CreateLabel(text)
                 New("TextLabel", {
                     Size            = UDim2.new(1, 0, 0, 24),
@@ -1561,7 +1463,6 @@ function VoidUI:CreateWindow(options)
                 }, sec)
             end
 
-            -- ── Separator ──
             function Section:CreateSeparator()
                 New("Frame", {
                     Size            = UDim2.new(1, 0, 0, 1),
@@ -1575,7 +1476,6 @@ function VoidUI:CreateWindow(options)
         return Tab
     end
 
-    -- Notify shortcut on window
     function Window:Notify(opts)
         VoidUI:Notify(opts)
     end
@@ -1583,9 +1483,6 @@ function VoidUI:CreateWindow(options)
     return Window
 end
 
--- ─────────────────────────────────────────────
---  Quick Theme Access
--- ─────────────────────────────────────────────
 VoidUI.Theme = Theme
 
 return VoidUI
