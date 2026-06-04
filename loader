@@ -22,6 +22,84 @@ local LocalPlayer = Players.LocalPlayer
 local Mouse       = LocalPlayer:GetMouse()
 
 -- ─────────────────────────────────────────────
+--  Single Instance Cleanup
+--  Destroy any previous VoidUI GUIs before spawning new ones
+-- ─────────────────────────────────────────────
+local function DestroyAllVoidUI()
+    local targets = { CoreGui, LocalPlayer:FindFirstChild("PlayerGui") }
+    for _, parent in ipairs(targets) do
+        if parent then
+            for _, child in ipairs(parent:GetChildren()) do
+                if child.Name:match("^VoidUI") then
+                    child:Destroy()
+                end
+            end
+        end
+    end
+end
+DestroyAllVoidUI()
+
+-- ─────────────────────────────────────────────
+--  Loading Screen (protected, 3 seconds)
+-- ─────────────────────────────────────────────
+local function ShowLoadingScreen()
+    local loadSg = Instance.new("ScreenGui")
+    loadSg.Name = "VoidUI_Loader"
+    loadSg.ResetOnSpawn = false
+    loadSg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    loadSg.DisplayOrder = 9999
+    pcall(function() loadSg.Parent = CoreGui end)
+    if not loadSg.Parent then loadSg.Parent = LocalPlayer.PlayerGui end
+
+    -- Block
+    local bg = Instance.new("Frame")
+    bg.Size = UDim2.new(1, 0, 1, 0)
+    bg.BackgroundColor3 = Color3.fromRGB(8, 8, 8)
+    bg.BackgroundTransparency = 0
+    bg.ZIndex = 1
+    bg.Parent = loadSg
+
+    -- Title
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(0, 300, 0, 60)
+    title.Position = UDim2.new(0.5, -150, 0.5, -30)
+    title.BackgroundTransparency = 1
+    title.Text = "VoidUI"
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 42
+    title.TextColor3 = Color3.fromRGB(230, 230, 230)
+    title.ZIndex = 2
+    title.Parent = bg
+
+    -- Subtitle
+    local sub = Instance.new("TextLabel")
+    sub.Size = UDim2.new(0, 300, 0, 24)
+    sub.Position = UDim2.new(0.5, -150, 0.5, 36)
+    sub.BackgroundTransparency = 1
+    sub.Text = "Loading..."
+    sub.Font = Enum.Font.Gotham
+    sub.TextSize = 13
+    sub.TextColor3 = Color3.fromRGB(100, 100, 100)
+    sub.ZIndex = 2
+    sub.Parent = bg
+
+    -- Protect from modification
+    loadSg.DescendantAdded:Connect(function(d) d:Destroy() end)
+
+    task.wait(3)
+
+    -- Fade out
+    TweenService:Create(bg, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        BackgroundTransparency = 1
+    }):Play()
+    TweenService:Create(title, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
+    TweenService:Create(sub, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
+    task.wait(0.45)
+    loadSg:Destroy()
+end
+ShowLoadingScreen()
+
+-- ─────────────────────────────────────────────
 --  Theme
 -- ─────────────────────────────────────────────
 local Theme = {
@@ -389,9 +467,8 @@ function VoidUI:CreateWindow(options)
         Tween(closeBtn, { BackgroundColor3 = Color3.fromRGB(40,40,40), TextColor3 = Theme.TextMuted })
     end)
     closeBtn.MouseButton1Click:Connect(function()
-        Tween(win, { BackgroundTransparency = 1 }, Theme.TweenSlow)
-        task.wait(0.36)
-        sg:Destroy()
+        task.wait(0.15)  -- small intentional delay before wiping everything
+        DestroyAllVoidUI()
     end)
 
     -- Minimize button
