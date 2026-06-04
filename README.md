@@ -26,6 +26,7 @@
 
 - [Features](#features)
 - [Loading VoidUI](#loading-voidui)
+- [Loading Screen](#loading-screen)
 - [Creating a Window](#creating-a-window)
 - [Tabs](#tabs)
 - [Sections](#sections)
@@ -50,10 +51,11 @@
 
 | Feature | Details |
 |---|---|
-| Window | Draggable · Resizable · Minimizable · Close button |
-| Tabs | Sidebar navigation with active indicator |
-| Elements | Button · Toggle · Slider · Dropdown · TextInput · Keybind · ColorPicker |
-| Notifications | Info · Success · Warning · Error with progress bar |
+| Window | Draggable · Resizable · Minimizable · Close button · Gradient title bar · 1px separator |
+| Tabs | Sidebar navigation · Prominent indicator bar · Slide-transition between pages |
+| Elements | Button (ripple) · Toggle · Slider · Dropdown · TextInput · Keybind · ColorPicker |
+| Notifications | Slide-in from right · Stacked with depth · X close button · Progress bar · Auto-dismiss |
+| Loading Screen | Pulsing dot · Shimmer progress bar · Gradient accent strip · Fade-in sequence |
 | Theme | Monochrome · Dark · Modern |
 | API | Every element has `:Set()` / `:Get()` for full programmatic control |
 
@@ -66,6 +68,23 @@ Once hosted, load VoidUI at the top of any script using `loadstring` and `game:H
 ```lua
 local VoidUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/ImYasuf/VoidUi/refs/heads/main/loader"))()
 ```
+
+---
+
+## Loading Screen
+
+VoidUI displays a polished loading card automatically when the library initialises. It destroys itself after ~3 seconds and requires no configuration.
+
+**What it shows:**
+- A centered dark card with rounded corners and a subtle border
+- A **gradient accent strip** across the top of the card (fades from transparent → light → transparent)
+- A **pulsing dot** above the title that breathes in/out while loading
+- The **VoidUI** title fading in
+- A **progress bar with a shimmer sweep** that runs across the fill as it loads
+- A random **hint message** from a built-in list
+- The library version number
+
+The loading screen uses tamper-protection — any GUI added to it after 50ms is automatically destroyed.
 
 ---
 
@@ -85,11 +104,17 @@ local Window = VoidUI:CreateWindow({
 | `Size` | UDim2 | `560 × 420` | Initial window size |
 | `Position` | UDim2 | Centered | Initial window position |
 
+**Visual details:**
+- The title bar has a subtle **left-to-right gradient** (slightly lighter in the center)
+- A **1px separator line** sits between the title bar and the content body
+- A **1px separator line** sits between the sidebar and the content area
+- An accent dot appears to the left of the title text
+
 The window supports:
 - **Drag** — click and drag the title bar to move
 - **Resize** — drag the handle in the bottom-right corner
-- **Minimize** — click `─` to collapse to the title bar only
-- **Close** — click `✕` to destroy the window with a fade animation
+- **Minimize** — click `–` to collapse to the title bar only
+- **Close** — click `×` to destroy the window with a fade animation
 
 ---
 
@@ -112,7 +137,10 @@ local SettingsTab = Window:CreateTab("Settings")
 | `Name` | string | ✅ | Label shown in the sidebar |
 | `Icon` | string | ❌ | Emoji/symbol shown before the name |
 
-The first tab created is automatically selected.
+**Behaviour:**
+- The first tab created is automatically selected
+- Switching tabs uses a **slide transition** — the new page slides in from the right while the old one slides out to the left
+- The active tab shows a **prominent 3px left-side indicator bar** in the accent color
 
 ---
 
@@ -128,6 +156,11 @@ local MovementSection = MainTab:CreateSection("Movement")
 local UnnamedSection = MainTab:CreateSection()
 ```
 
+**Visual details:**
+- Section headers have a **small vertical accent line prefix** to the left of the label text
+- A thin 1px rule sits below each header
+- Extra padding is applied around each section for a less cramped feel
+
 All element methods are called on the section, not the tab directly.
 
 ---
@@ -136,7 +169,7 @@ All element methods are called on the section, not the tab directly.
 
 ### Button
 
-A clickable row that fires a callback.
+A clickable row that fires a callback. Clicking triggers a **ripple animation** from the click point.
 
 ```lua
 CombatSection:CreateButton({
@@ -365,7 +398,7 @@ MySection:CreateSeparator()
 
 ## Notifications
 
-Notifications appear as cards in the bottom-right corner of the screen with a color-coded accent and an animated progress bar.
+Notifications **slide in from the right** as cards in the bottom-right corner of the screen. Multiple notifications stack with a slight width offset to give a layered depth effect. Each card has an **X button** to dismiss it early, and an animated progress bar that drains over the duration.
 
 ```lua
 -- Via the window object:
@@ -391,6 +424,11 @@ VoidUI:Notify({
 | `Desc` | string | `""` | Smaller body text |
 | `Type` | string | `"Info"` | Color theme: `Info` (blue) · `Success` (green) · `Warning` (yellow) · `Error` (red) |
 | `Duration` | number | `4` | Auto-dismiss time in seconds |
+
+**Behaviour:**
+- Cards **slide in** from the right with a spring easing (Back.Out)
+- When dismissed (via timeout or X button), cards **slide back out** to the right
+- Multiple notifications stack vertically with each card slightly narrower than the last, giving a layered look
 
 ---
 
@@ -570,8 +608,8 @@ local Window = VoidUI:CreateWindow({ Title = "My Script" })
 | `Surface` | `18, 18, 18` | Title bar and sidebar |
 | `SurfaceAlt` | `24, 24, 24` | Element row background |
 | `Border` | `40, 40, 40` | Stroke/outline color |
-| `Accent` | `220, 220, 220` | Primary accent (toggle, slider, dot) |
-| `AccentDim` | `130, 130, 130` | Secondary accent |
+| `Accent` | `220, 220, 220` | Primary accent (toggle, slider, indicator bar) |
+| `AccentDim` | `130, 130, 130` | Secondary accent (section prefix line, value labels) |
 | `Text` | `230, 230, 230` | Primary text |
 | `TextMuted` | `120, 120, 120` | Secondary/label text |
 | `Success` | `80, 200, 120` | Notification success color |
