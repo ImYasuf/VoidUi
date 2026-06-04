@@ -60,76 +60,13 @@
 
 ---
 
-## Hosting on GitHub
-
-Follow these steps to host VoidUI on GitHub and load it into any script via `loadstring`.
-
-### Step 1 — Create a GitHub Account
-
-Go to [github.com](https://github.com) and sign up if you don't have an account.
-
-### Step 2 — Create a New Repository
-
-1. Click the **＋** icon in the top right → **New repository**
-2. Fill in the details:
-   - **Repository name:** `VoidUI` (or anything you like)
-   - **Description:** `A modern Roblox UI Library`
-   - **Visibility:** ✅ Set to **Public** (required for raw links to work)
-3. Click **Create repository**
-
-### Step 3 — Upload VoidUI.lua
-
-**Option A — GitHub Web UI (easiest):**
-
-1. Inside your repository, click **Add file** → **Upload files**
-2. Drag and drop `VoidUI.lua` into the upload area
-3. Scroll down, write a commit message like `Add VoidUI library`
-4. Click **Commit changes**
-
-**Option B — Git CLI:**
-
-```bash
-git clone https://github.com/YOUR_USERNAME/VoidUI.git
-cd VoidUI
-# Copy VoidUI.lua into this folder, then:
-git add VoidUI.lua
-git commit -m "Add VoidUI library"
-git push origin main
-```
-
-### Step 4 — Get the Raw Link
-
-1. Open `VoidUI.lua` in your repository
-2. Click the **Raw** button (top right of the file viewer)
-3. Copy the URL from your browser — it will look like:
-
-```
-https://raw.githubusercontent.com/YOUR_USERNAME/VoidUI/main/VoidUI.lua
-```
-
-> ⚠️ **Important:** Always use the `raw.githubusercontent.com` URL, not the normal GitHub page URL. The normal URL returns HTML, not Lua code.
-
-### Step 5 — Test the Raw Link
-
-Paste the raw URL into your browser. You should see **only Lua code** with no HTML. If you see a GitHub page instead, you copied the wrong link — go back and click **Raw** again.
-
----
-
 ## Loading VoidUI
 
 Once hosted, load VoidUI at the top of any script using `loadstring` and `game:HttpGet`:
 
 ```lua
-local VoidUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/VoidUI/main/VoidUI.lua"))()
+local VoidUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/ImYasuf/VoidUi/refs/heads/main/loader"))()
 ```
-
-Replace `YOUR_USERNAME` with your actual GitHub username.
-
-> 💡 **Tip:** Store the URL in a variable so it's easy to update later:
-> ```lua
-> local URL = "https://raw.githubusercontent.com/YOUR_USERNAME/VoidUI/main/VoidUI.lua"
-> local VoidUI = loadstring(game:HttpGet(URL))()
-> ```
 
 ---
 
