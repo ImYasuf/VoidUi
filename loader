@@ -43,6 +43,18 @@ DestroyAllVoidUI()
 --  Loading Screen (protected, 3 seconds)
 -- ─────────────────────────────────────────────
 local function ShowLoadingScreen()
+    local hints = {
+        "Crafting a seamless experience...",
+        "Initializing premium components...",
+        "Polishing every pixel...",
+        "Wiring up the void...",
+        "Preparing your interface...",
+        "Tuning the dark theme...",
+        "Almost ready. Stay sharp.",
+        "Loading elements with precision...",
+    }
+    local hint = hints[math.random(1, #hints)]
+
     local loadSg = Instance.new("ScreenGui")
     loadSg.Name = "VoidUI_Loader"
     loadSg.ResetOnSpawn = false
@@ -51,50 +63,167 @@ local function ShowLoadingScreen()
     pcall(function() loadSg.Parent = CoreGui end)
     if not loadSg.Parent then loadSg.Parent = LocalPlayer.PlayerGui end
 
-    -- Block
-    local bg = Instance.new("Frame")
-    bg.Size = UDim2.new(1, 0, 1, 0)
-    bg.BackgroundColor3 = Color3.fromRGB(8, 8, 8)
-    bg.BackgroundTransparency = 0
-    bg.ZIndex = 1
-    bg.Parent = loadSg
+    -- Dim overlay behind card
+    local overlay = Instance.new("Frame")
+    overlay.Size = UDim2.new(1, 0, 1, 0)
+    overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    overlay.BackgroundTransparency = 0.45
+    overlay.ZIndex = 1
+    overlay.Parent = loadSg
+
+    -- Card — small, centered, fixed size
+    local card = Instance.new("Frame")
+    card.Size = UDim2.new(0, 280, 0, 138)
+    card.Position = UDim2.new(0.5, -140, 0.5, -69)
+    card.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
+    card.BorderSizePixel = 0
+    card.ZIndex = 2
+    card.Parent = loadSg
+
+    local cardCorner = Instance.new("UICorner")
+    cardCorner.CornerRadius = UDim.new(0, 12)
+    cardCorner.Parent = card
+
+    local cardStroke = Instance.new("UIStroke")
+    cardStroke.Color = Color3.fromRGB(38, 38, 38)
+    cardStroke.Thickness = 1
+    cardStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    cardStroke.Parent = card
+
+    -- Top accent line
+    local accentLine = Instance.new("Frame")
+    accentLine.Size = UDim2.new(0, 40, 0, 2)
+    accentLine.Position = UDim2.new(0.5, -20, 0, 0)
+    accentLine.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
+    accentLine.BorderSizePixel = 0
+    accentLine.ZIndex = 3
+    accentLine.Parent = card
+    local accentCorner = Instance.new("UICorner")
+    accentCorner.CornerRadius = UDim.new(0, 2)
+    accentCorner.Parent = accentLine
+
+    -- Logo dot
+    local dot = Instance.new("Frame")
+    dot.Size = UDim2.new(0, 6, 0, 6)
+    dot.Position = UDim2.new(0.5, -3, 0, 22)
+    dot.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+    dot.BorderSizePixel = 0
+    dot.ZIndex = 3
+    dot.Parent = card
+    local dotCorner = Instance.new("UICorner")
+    dotCorner.CornerRadius = UDim.new(1, 0)
+    dotCorner.Parent = dot
 
     -- Title
     local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(0, 300, 0, 60)
-    title.Position = UDim2.new(0.5, -150, 0.5, -30)
+    title.Size = UDim2.new(1, 0, 0, 28)
+    title.Position = UDim2.new(0, 0, 0, 34)
     title.BackgroundTransparency = 1
     title.Text = "VoidUI"
     title.Font = Enum.Font.GothamBold
-    title.TextSize = 42
-    title.TextColor3 = Color3.fromRGB(230, 230, 230)
-    title.ZIndex = 2
-    title.Parent = bg
+    title.TextSize = 22
+    title.TextColor3 = Color3.fromRGB(235, 235, 235)
+    title.TextXAlignment = Enum.TextXAlignment.Center
+    title.ZIndex = 3
+    title.Parent = card
 
-    -- Subtitle
-    local sub = Instance.new("TextLabel")
-    sub.Size = UDim2.new(0, 300, 0, 24)
-    sub.Position = UDim2.new(0.5, -150, 0.5, 36)
-    sub.BackgroundTransparency = 1
-    sub.Text = "Loading..."
-    sub.Font = Enum.Font.Gotham
-    sub.TextSize = 13
-    sub.TextColor3 = Color3.fromRGB(100, 100, 100)
-    sub.ZIndex = 2
-    sub.Parent = bg
+    -- Progress bar track
+    local trackBg = Instance.new("Frame")
+    trackBg.Size = UDim2.new(0, 220, 0, 3)
+    trackBg.Position = UDim2.new(0.5, -110, 0, 78)
+    trackBg.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    trackBg.BorderSizePixel = 0
+    trackBg.ZIndex = 3
+    trackBg.Parent = card
+    local trackCorner = Instance.new("UICorner")
+    trackCorner.CornerRadius = UDim.new(1, 0)
+    trackCorner.Parent = trackBg
 
-    -- Protect from modification
-    loadSg.DescendantAdded:Connect(function(d) d:Destroy() end)
+    -- Progress bar fill
+    local fill = Instance.new("Frame")
+    fill.Size = UDim2.new(0, 0, 1, 0)
+    fill.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
+    fill.BorderSizePixel = 0
+    fill.ZIndex = 4
+    fill.Parent = trackBg
+    local fillCorner = Instance.new("UICorner")
+    fillCorner.CornerRadius = UDim.new(1, 0)
+    fillCorner.Parent = fill
+
+    -- Hint text
+    local hintLabel = Instance.new("TextLabel")
+    hintLabel.Size = UDim2.new(1, -24, 0, 20)
+    hintLabel.Position = UDim2.new(0, 12, 0, 92)
+    hintLabel.BackgroundTransparency = 1
+    hintLabel.Text = hint
+    hintLabel.Font = Enum.Font.Gotham
+    hintLabel.TextSize = 10
+    hintLabel.TextColor3 = Color3.fromRGB(75, 75, 75)
+    hintLabel.TextXAlignment = Enum.TextXAlignment.Center
+    hintLabel.TextTruncate = Enum.TextTruncate.AtEnd
+    hintLabel.ZIndex = 3
+    hintLabel.Parent = card
+
+    -- Version tag
+    local ver = Instance.new("TextLabel")
+    ver.Size = UDim2.new(1, 0, 0, 16)
+    ver.Position = UDim2.new(0, 0, 0, 114)
+    ver.BackgroundTransparency = 1
+    ver.Text = "v1.0.0"
+    ver.Font = Enum.Font.Gotham
+    ver.TextSize = 9
+    ver.TextColor3 = Color3.fromRGB(45, 45, 45)
+    ver.TextXAlignment = Enum.TextXAlignment.Center
+    ver.ZIndex = 3
+    ver.Parent = card
+
+    -- Protect from modification — lock after building
+    local protected = false
+    task.delay(0.05, function() protected = true end)
+    loadSg.DescendantAdded:Connect(function(d)
+        if protected then d:Destroy() end
+    end)
+
+    -- Animate card in
+    card.BackgroundTransparency = 1
+    cardStroke.Transparency = 1
+    title.TextTransparency = 1
+    hintLabel.TextTransparency = 1
+    ver.TextTransparency = 1
+    dot.BackgroundTransparency = 1
+    accentLine.BackgroundTransparency = 1
+
+    TweenService:Create(card, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0 }):Play()
+    TweenService:Create(cardStroke, TweenInfo.new(0.3), { Transparency = 0 }):Play()
+    task.wait(0.15)
+    TweenService:Create(accentLine, TweenInfo.new(0.25), { BackgroundTransparency = 0 }):Play()
+    TweenService:Create(dot, TweenInfo.new(0.25), { BackgroundTransparency = 0 }):Play()
+    task.wait(0.1)
+    TweenService:Create(title, TweenInfo.new(0.3), { TextTransparency = 0 }):Play()
+    task.wait(0.15)
+    TweenService:Create(hintLabel, TweenInfo.new(0.3), { TextTransparency = 0 }):Play()
+    TweenService:Create(ver, TweenInfo.new(0.3), { TextTransparency = 0 }):Play()
+
+    -- Animate progress bar over 2.6 seconds
+    TweenService:Create(fill, TweenInfo.new(2.6, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+        Size = UDim2.new(1, 0, 1, 0)
+    }):Play()
 
     task.wait(3)
 
-    -- Fade out
-    TweenService:Create(bg, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        BackgroundTransparency = 1
-    }):Play()
-    TweenService:Create(title, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
-    TweenService:Create(sub, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
-    task.wait(0.45)
+    -- Fade out everything
+    local fadeInfo = TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    TweenService:Create(card, fadeInfo, { BackgroundTransparency = 1 }):Play()
+    TweenService:Create(overlay, fadeInfo, { BackgroundTransparency = 1 }):Play()
+    TweenService:Create(title, fadeInfo, { TextTransparency = 1 }):Play()
+    TweenService:Create(hintLabel, fadeInfo, { TextTransparency = 1 }):Play()
+    TweenService:Create(ver, fadeInfo, { TextTransparency = 1 }):Play()
+    TweenService:Create(cardStroke, fadeInfo, { Transparency = 1 }):Play()
+    TweenService:Create(fill, fadeInfo, { BackgroundTransparency = 1 }):Play()
+    TweenService:Create(trackBg, fadeInfo, { BackgroundTransparency = 1 }):Play()
+    TweenService:Create(dot, fadeInfo, { BackgroundTransparency = 1 }):Play()
+    TweenService:Create(accentLine, fadeInfo, { BackgroundTransparency = 1 }):Play()
+    task.wait(0.4)
     loadSg:Destroy()
 end
 ShowLoadingScreen()
